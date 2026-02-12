@@ -21,7 +21,7 @@ opt.relativenumber = true
 opt.cursorline = true
 
 opt.autoindent = true -- smartindent, cindent
-opt.expandtab = false
+opt.expandtab = true
 opt.tabstop = 4
 opt.shiftwidth = 0
 opt.listchars = "tab:│ ,multispace:┊   " -- ┊ " :h listchars
@@ -33,41 +33,13 @@ opt.shell = "bash" -- ?yash
 -- opt.textwidth = 80
 opt.so = 7
 
--- working with binary files
-local augroup_binary = api.nvim_create_augroup('Binary', { clear = true })
-api.nvim_create_autocmd('BufReadPost', {
-	pattern = '*.efi, *.bin',
-	group = augroup_binary,
-	command = [[
-		silent %!xxd
-		set ft=xxd
-	]]
-})
-api.nvim_create_autocmd('BufWritePre', {
-	pattern = '*.efi',
-	group = augroup_binary,
-	command = [[
-		let last_line = line('.')
-		silent %!xxd -r
-	]]
-})
-api.nvim_create_autocmd('BufWritePost', {
-	pattern = '*.efi',
-	group = augroup_binary,
-	command = [[
-		silent %!xxd
-		exec last_line
-	]]
-})
+opt.splitright = true -- split vertical window to the right
+opt.splitbelow = true -- split horizontal window to the bottom
 
--- restore cursor position, ?use session.vim
-vim.api.nvim_create_autocmd('BufReadPost', {
-	pattern = '*',
-	command = [[
-		if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-	]]
-})
+vim.opt.colorcolumn = '120'
+vim.opt.showtabline = 2
 
+opt.clipboard:append("unnamedplus") -- use system clipboard as default register
 -- ? add binary files to the list, ?seperate mode if i want to edit a binary file
 -- vim.opt.wildignore = { '*.o', '*.a', '__pycache__' }
 
@@ -125,6 +97,14 @@ end)
 
 -- ### plugin setup
 
+require('blink.cmp').setup({
+  	  sources = {
+		default = { 'lsp', 'path', 'snippets', 'buffer' },
+	  },
+	  keymap = { preset = 'enter' },
+	  fuzzy = { implementation = 'lua' },
+})
+
 local blink_caps = require('blink.cmp').get_lsp_capabilities()
 vim.lsp.config('clangd', {
 	capabilities = require('blink.cmp').get_lsp_capabilities()
@@ -162,6 +142,7 @@ require('telescope').setup({
 	-- lsp_references = { theme = "ivy", },
   },
 })
+
 
 local gitsigns = require'gitsigns'
 
@@ -244,10 +225,23 @@ lmap('ck', "<cmd>e $MYVIMRC<cr>")
 -- lmap('cr', "<cmd>luafile $MYVIMRC<cr><cmd>PackerClean<cr><cmd>PackerInstall<cr><cmd>PackerCompile<cr>")
 
 -- clipboard
-lmap('p', '"+p')
-lmap('P', '"+P')
-lmap('y', '"+y')
-vmap('Y', '"+y')
+-- lmap('p', '"+p')
+-- lmap('P', '"+P')
+-- lmap('y', '"+y')
+-- vmap('Y', '"+y')
+--
+vim.keymap.set("n", "<leader>l", ":bnext<CR>")
+vim.keymap.set("n", "<leader>h", ":bprevious<CR>")
+vim.keymap.set("n", "<leader>q", ":bp <BAR> bd #<CR>")
+
+vim.keymap.set("n", "x", '"_x')
+vim.keymap.set({"n", "v"}, "<DEL>", '"_x', {noremap = true})
+vim.keymap.set({"n", "v"}, "d", '"_x', {noremap = true})
+vim.keymap.set("n", "dd", '"_dd', {noremap = true})
+vim.keymap.set("x", "p", 'pgvy', {noremap = true})
+vim.keymap.set({"n", "v"}, "y", '"+y', {noremap = true})
+
+
 -- gp to put cursor after pasted text
 nmap('D', '"Add') -- seems like nvim pastes from the last used register
 lmap(';', '"add')
