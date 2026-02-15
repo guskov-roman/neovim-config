@@ -105,6 +105,8 @@ require('blink.cmp').setup({
 	  fuzzy = { implementation = 'lua' },
 })
 
+
+
 local blink_caps = require('blink.cmp').get_lsp_capabilities()
 vim.lsp.config('clangd', {
 	capabilities = require('blink.cmp').get_lsp_capabilities()
@@ -143,6 +145,10 @@ require('telescope').setup({
   },
 })
 
+-- require('blink.cmp').setup({
+--   keymap = { preset = 'supertab' },
+-- })
+--
 
 local gitsigns = require'gitsigns'
 
