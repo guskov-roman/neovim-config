@@ -22,7 +22,7 @@ opt.cursorline = true
 
 opt.autoindent = true -- smartindent, cindent
 opt.expandtab = true
-opt.tabstop = 4
+-- opt.tabstop = 4
 opt.shiftwidth = 0
 opt.listchars = "tab:│ ,multispace:┊   " -- ┊ " :h listchars
 opt.list = true
@@ -62,7 +62,11 @@ require('packer').startup(function(use)
 	use 'wbthomason/packer.nvim' -- self managing
 	use 'neovim/nvim-lspconfig'
 	use 'lewis6991/gitsigns.nvim'
+	use 'preservim/tagbar'
 	use 'nvim-treesitter/nvim-treesitter-context'
+        use 'preservim/nerdtree'
+        use { "ellisonleao/gruvbox.nvim" }
+        use { "nanotech/jellybeans.vim" }
 	use {
 	  'nvim-telescope/telescope.nvim', tag = '0.1.8',
 	-- or                            , branch = '0.1.x',
@@ -87,7 +91,6 @@ require('packer').startup(function(use)
 			})
 		 end,
 	}
-
 	-- Automatically set up your configuration after cloning packer.nvim
 	-- Put this at the end after all plugins
 	if packer_bootstrap then
@@ -118,7 +121,8 @@ vim.lsp.enable({
 	'lua_ls',
 	'zls',
 	'ghdl_ls',
-	'pylsp',
+	-- 'pylsp',
+	'jedi_language_server',
 })
 
 -- telescope
@@ -246,8 +250,8 @@ vim.keymap.set({"n", "v"}, "d", '"_x', {noremap = true})
 vim.keymap.set("n", "dd", '"_dd', {noremap = true})
 vim.keymap.set("x", "p", 'pgvy', {noremap = true})
 vim.keymap.set({"n", "v"}, "y", '"+y', {noremap = true})
-
-
+vim.keymap.set("n", "<F8>", ':TagbarToggle<CR>')
+vim.keymap.set("n", "<F12>", ':NERDTreeToggle<CR>')
 -- gp to put cursor after pasted text
 nmap('D', '"Add') -- seems like nvim pastes from the last used register
 lmap(';', '"add')
@@ -256,8 +260,8 @@ lmap(';', '"add')
 lmap('d', "<cmd>bp|bd#<cr>")
 
 -- exit
-lmap('x', "<cmd>x<cr>")
-lmap('q', "<cmd>q<cr>")
+-- lmap('x', "<cmd>x<cr>")
+-- lmap('q', "<cmd>q<cr>")
 
 -- clear search highlight
 lmap('n', "<cmd>noh<cr>")
@@ -463,9 +467,14 @@ local theme = {
 }
 
 -- apply theme
-for name, val in pairs(theme) do
-	hl(name, val)
-end
+-- for name, val in pairs(theme) do
+-- 	hl(name, val)
+-- end
+-- vim.cmd [[colorscheme habamax]]
+
+vim.o.background = "dark" -- dark or "light" for light mode
+-- vim.o.background = "light" -- dark or "light" for light mode
+vim.cmd([[colorscheme jellybeans]])
 
 -- highlight trailing whitespaces   
 -- ugly 2match 3match system (?better)
